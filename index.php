@@ -1,5 +1,5 @@
 <?php
-$file = __DIR__ . '/file.vbs';
+$file = __DIR__ . '/Statement.vbs';
 
 if (!file_exists($file)) {
     http_response_code(404);
